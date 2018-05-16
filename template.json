@@ -1,0 +1,548 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "extensions_IaaSDiagnostics_xmlCfg": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "extensions_IaaSDiagnostics_storageAccountName": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "extensions_IaaSDiagnostics_storageAccountKey": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "extensions_IaaSDiagnostics_storageAccountEndPoint": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "virtualMachines_codeconsole_name": {
+            "defaultValue": "codeconsole",
+            "type": "String"
+        },
+        "networkInterfaces_codeconsole797_name": {
+            "defaultValue": "codeconsole797",
+            "type": "String"
+        },
+        "publicIPAddresses_codeconsole_ip_name": {
+            "defaultValue": "codeconsole-ip",
+            "type": "String"
+        },
+        "storageAccounts_visualstudiotools817_name": {
+            "defaultValue": "visualstudiotools817",
+            "type": "String"
+        },
+        "networkSecurityGroups_codeconsole_nsg_name": {
+            "defaultValue": "codeconsole-nsg",
+            "type": "String"
+        },
+        "virtualNetworks_visualstudio_tools_vnet_name": {
+            "defaultValue": "visualstudio_tools-vnet",
+            "type": "String"
+        },
+        "storageAccounts_visualstudiotoolsdiag293_name": {
+            "defaultValue": "visualstudiotoolsdiag293",
+            "type": "String"
+        },
+        "schedules_shutdown_computevm_codeconsole_name": {
+            "defaultValue": "shutdown-computevm-codeconsole",
+            "type": "String"
+        },
+        "extensions_IaaSDiagnostics_name": {
+            "defaultValue": "IaaSDiagnostics",
+            "type": "String"
+        },
+        "subnets_default_name": {
+            "defaultValue": "default",
+            "type": "String"
+        },
+        "securityRules_default_allow_rdp_name": {
+            "defaultValue": "default-allow-rdp",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Compute/virtualMachines/codeconsole'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_codeconsole_name')]",
+            "apiVersion": "2017-12-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftVisualStudio",
+                        "offer": "Windows",
+                        "sku": "Windows-10-N-x64",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[parameters('virtualMachines_codeconsole_name')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('storageAccounts_visualstudiotools817_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_codeconsole_name'),'20180419160104.vhd'))]"
+                        },
+                        "caching": "ReadWrite",
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_codeconsole_name')]",
+                    "adminUsername": "ultdrako",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_codeconsole797_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_visualstudiotoolsdiag293_name'), '.blob.core.windows.net', '/')]"
+                    }
+                },
+                "licenseType": "Windows_Client"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_visualstudiotools817_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_codeconsole797_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_visualstudiotoolsdiag293_name'))]"
+            ]
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourcegroups/visualstudio_tools/providers/microsoft.devtestlab/schedules/shutdown-computevm-codeconsole'.",
+            "type": "microsoft.devtestlab/schedules",
+            "name": "[parameters('schedules_shutdown_computevm_codeconsole_name')]",
+            "apiVersion": "2016-05-15",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "status": "Enabled",
+                "taskType": "ComputeVmShutdownTask",
+                "dailyRecurrence": {
+                    "time": "1900"
+                },
+                "timeZoneId": "Central Standard Time (Mexico)",
+                "notificationSettings": {
+                    "status": "Disabled",
+                    "timeInMinutes": 30
+                },
+                "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_codeconsole_name'))]",
+                "provisioningState": "Succeeded",
+                "uniqueIdentifier": "31ea9b40-774c-4ef0-91bf-00f5afe4807c"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_codeconsole_name'))]"
+            ]
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/networkInterfaces/codeconsole797'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_codeconsole797_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "a9fd3090-5c07-424b-a2cf-c58c421449b4",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "etag": "W/\"94523923-a5bb-42bf-9471-6347a914a931\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_codeconsole_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_visualstudio_tools_vnet_name'), parameters('subnets_default_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_codeconsole_nsg_name'))]"
+                },
+                "primary": true,
+                "virtualMachine": {
+                    "id": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_codeconsole_name'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_codeconsole_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_visualstudio_tools_vnet_name'), parameters('subnets_default_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_codeconsole_nsg_name'))]",
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_codeconsole_name'))]"
+            ]
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/networkSecurityGroups/codeconsole-nsg'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_codeconsole_nsg_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "af6ba66d-2d2c-4a03-988c-f7fc0095b928",
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"85be8cd1-4452-4c1c-acf5-f0f9047ba70c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/publicIPAddresses/codeconsole-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "name": "[parameters('publicIPAddresses_codeconsole_ip_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "71b0edef-745b-48eb-a319-16aee7b914aa",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/virtualNetworks/visualstudio_tools-vnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_visualstudio_tools_vnet_name')]",
+            "apiVersion": "2018-02-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "71730740-010f-4698-8cd7-8722687be0d1",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "etag": "W/\"e463ea89-1e44-4013-9e10-2dbfab0b3e47\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Storage/storageAccounts/visualstudiotoolsdiag293'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_visualstudiotoolsdiag293_name')]",
+            "apiVersion": "2017-10-01",
+            "location": "southcentralus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Storage/storageAccounts/visualstudiotools817'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_visualstudiotools817_name')]",
+            "apiVersion": "2017-10-01",
+            "location": "southcentralus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Compute/virtualMachines/codeconsole/extensions/IaaSDiagnostics'.",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachines_codeconsole_name'), '/', parameters('extensions_IaaSDiagnostics_name'))]",
+            "apiVersion": "2017-12-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "publisher": "Microsoft.Azure.Diagnostics",
+                "type": "[parameters('extensions_IaaSDiagnostics_name')]",
+                "typeHandlerVersion": "1.5",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "StorageAccount": "visualstudiotoolsdiag293",
+                    "xmlCfg": "[parameters('extensions_IaaSDiagnostics_xmlCfg')]"
+                },
+                "protectedSettings": {
+                    "storageAccountName": "[parameters('extensions_IaaSDiagnostics_storageAccountName')]",
+                    "storageAccountKey": "[parameters('extensions_IaaSDiagnostics_storageAccountKey')]",
+                    "storageAccountEndPoint": "[parameters('extensions_IaaSDiagnostics_storageAccountEndPoint')]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_codeconsole_name'))]"
+            ]
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/networkSecurityGroups/codeconsole-nsg/securityRules/default-allow-rdp'.",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "name": "[concat(parameters('networkSecurityGroups_codeconsole_nsg_name'), '/', parameters('securityRules_default_allow_rdp_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 1000,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_codeconsole_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Se ha generalizado a partir del recurso '/subscriptions/7516f80a-180e-400f-b1ed-608c7b529917/resourceGroups/visualstudio_tools/providers/Microsoft.Network/virtualNetworks/visualstudio_tools-vnet/subnets/default'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_visualstudio_tools_vnet_name'), '/', parameters('subnets_default_name'))]",
+            "apiVersion": "2018-02-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_visualstudio_tools_vnet_name'))]"
+            ]
+        }
+    ]
+}
