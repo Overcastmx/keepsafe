@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "extensions_IaaSDiagnostics_xmlCfg": {
+            "value": null
+        },
+        "extensions_IaaSDiagnostics_storageAccountName": {
+            "value": null
+        },
+        "extensions_IaaSDiagnostics_storageAccountKey": {
+            "value": null
+        },
+        "extensions_IaaSDiagnostics_storageAccountEndPoint": {
+            "value": null
+        },
+        "virtualMachines_codeconsole_name": {
+            "value": null
+        },
+        "networkInterfaces_codeconsole797_name": {
+            "value": null
+        },
+        "publicIPAddresses_codeconsole_ip_name": {
+            "value": null
+        },
+        "storageAccounts_visualstudiotools817_name": {
+            "value": null
+        },
+        "networkSecurityGroups_codeconsole_nsg_name": {
+            "value": null
+        },
+        "virtualNetworks_visualstudio_tools_vnet_name": {
+            "value": null
+        },
+        "storageAccounts_visualstudiotoolsdiag293_name": {
+            "value": null
+        },
+        "schedules_shutdown_computevm_codeconsole_name": {
+            "value": null
+        },
+        "extensions_IaaSDiagnostics_name": {
+            "value": null
+        },
+        "subnets_default_name": {
+            "value": null
+        },
+        "securityRules_default_allow_rdp_name": {
+            "value": null
+        }
+    }
+}
